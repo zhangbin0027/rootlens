@@ -1,0 +1,137 @@
+# error_patterns.yaml — Layer 2 Signal Patterns
+# These patterns CLASSIFY errors. They do NOT make decisions.
+# Decision logic lives in decision.py (Layer 1).
+#
+# Inclusion criteria:
+# - Pattern must be producible by a standard compiler/linker
+# - Pattern must not reference build-system-specific artifacts
+# - Pattern must be language-identifiable
+
+# ---------------------------------------------------------
+# 1. Base patterns (cross-language, proven)
+# ---------------------------------------------------------
+base:
+  - name: cannot_find_symbol
+    type: COMPILATION
+    regex: "error:\\s*cannot find symbol"
+  - name: was_not_declared
+    type: COMPILATION
+    regex: "error: .+ was not declared"
+  - name: undefined_reference
+    type: LINKER
+    regex: "undefined reference to"
+  - name: does_not_name_a_type
+    type: COMPILATION
+    regex: "error: .+ does not name a type"
+  - name: header_not_found
+    type: COMPILATION
+    regex: "error: .*\\.h: No such file"
+
+# ---------------------------------------------------------
+# 2. C/C++ patterns (gcc/clang)
+# ---------------------------------------------------------
+cpp:
+  - name: no_matching_function
+    type: COMPILATION
+    regex: "error: no matching function for call"
+  - name: invalid_use_of
+    type: COMPILATION
+    regex: "error: invalid use of"
+  - name: no_member_named
+    type: COMPILATION
+    regex: "error: .+ has no member named"
+  - name: redefinition
+    type: COMPILATION
+    regex: "error: redefinition of"
+  - name: conflicting_declaration
+    type: COMPILATION
+    regex: "error: conflicting declaration"
+  - name: cannot_convert
+    type: COMPILATION
+    regex: "error: cannot convert"
+  - name: template_argument
+    type: COMPILATION
+    regex: "error: template argument"
+  - name: fatal_header_missing
+    type: COMPILATION
+    regex: "fatal error: .+\\.h: No such file"
+  - name: no_type_named
+    type: COMPILATION
+    regex: "error: no type named .+ in"
+  - name: use_of_deleted_function
+    type: COMPILATION
+    regex: "error: use of deleted function"
+  - name: undeclared_identifier
+    type: COMPILATION
+    regex: "error: use of undeclared identifier"
+  - name: version_control_conflict
+    type: SYNTAX
+    regex: "error: version control conflict marker"
+  - name: expected_before
+    type: SYNTAX
+    regex: "error:\\s*expected .* before"
+
+# ---------------------------------------------------------
+# 3. Java patterns (javac)
+# ---------------------------------------------------------
+java:
+  - name: package_not_exist
+    type: COMPILATION
+    regex: "error: package .+ does not exist"
+  - name: class_is_public
+    type: COMPILATION
+    regex: "error: class .+ is public"
+  - name: incompatible_types
+    type: COMPILATION
+    regex: "error: incompatible types"
+  - name: method_cannot_be_applied
+    type: COMPILATION
+    regex: "error: method .+ in class .+ cannot be applied"
+  - name: unclosed_literal
+    type: SYNTAX
+    regex: "error: unclosed character literal"
+  - name: reached_end_of_file
+    type: SYNTAX
+    regex: "error: reached end of file while parsing"
+
+# ---------------------------------------------------------
+# 4. Kotlin patterns (kotlinc)
+# ---------------------------------------------------------
+kotlin:
+  - name: unresolved_reference
+    type: COMPILATION
+    regex: "Unresolved reference:"
+  - name: type_mismatch
+    type: COMPILATION
+    regex: "Type mismatch:"
+  - name: none_of_functions
+    type: COMPILATION
+    regex: "None of the following functions can be called"
+  - name: val_cannot_reassign
+    type: SYNTAX
+    regex: "Val cannot be reassigned"
+
+# ---------------------------------------------------------
+# 5. Python patterns
+# ---------------------------------------------------------
+python:
+  - name: module_not_found
+    type: COMPILATION
+    regex: "ModuleNotFoundError: No module named"
+  - name: import_error
+    type: COMPILATION
+    regex: "ImportError: cannot import name"
+
+# ---------------------------------------------------------
+# 6. Linker patterns
+# ---------------------------------------------------------
+linker:
+  - name: multiple_definition
+    type: LINKER
+    regex: "multiple definition of"
+  - name: ld_exit_status
+    type: LINKER
+    regex: "ld returned 1 exit status"
+  - name: symbol_not_found
+    type: LINKER
+    regex: "symbol\\(s\\) not found"

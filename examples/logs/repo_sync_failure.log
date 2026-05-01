@@ -1,0 +1,7 @@
+Initializing workspace...
+[INFO] Syncing repository manifest...
+MANIFEST_INIT_ERROR: Failed to initialize manifest
+fatal: Could not read from remote repository.
+Please make sure you have the correct access rights
+and the repository exists.
+Sync failed. Cannot proceed with build.

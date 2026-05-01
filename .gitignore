@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+.ai-context/
+.clinerules
+CLINE_TRIGGER_PROMPT.md
+CROSS_MODEL_REVIEW_PROMPT.md
+review/
+benchmarks/results.json
+.pytest_cache/

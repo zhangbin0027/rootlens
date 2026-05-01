@@ -1,0 +1,8 @@
+Building project...
+[INFO] Compiling src/auth/login_handler.cpp
+src/auth/login_handler.cpp:42:15: error: cannot find symbol
+    symbol:   method validateToken
+    location: class AuthService
+src/auth/login_handler.cpp:58:3: error: incompatible types: String cannot be converted to int
+2 errors generated.
+BUILD FAILED

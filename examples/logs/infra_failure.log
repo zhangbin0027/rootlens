@@ -1,0 +1,6 @@
+Starting build pipeline...
+[INFO] Fetching dependencies...
+[INFO] Building target //src/core:main
+[ERROR] write /tmp/build/output/main.o: No space left on device
+[ERROR] Failed to write output file
+Build terminated with errors.

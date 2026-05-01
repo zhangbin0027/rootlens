@@ -1,0 +1,360 @@
+[
+  {
+    "id": "infra_001",
+    "log": "[ERROR] write /tmp/out/obj.o: No space left on device\nBuild failed.",
+    "changed_files": [
+      "src/main.cpp"
+    ],
+    "label": "CLOSE",
+    "reason": "Disk full is infrastructure constraint"
+  },
+  {
+    "id": "infra_002",
+    "log": "MANIFEST_INIT_ERROR: cannot initialize\nfatal: repo sync failed",
+    "changed_files": [
+      "src/app.java"
+    ],
+    "label": "CLOSE",
+    "reason": "Pre-apply failure, code not yet checked out"
+  },
+  {
+    "id": "infra_003",
+    "log": "error: suppress-dest-branch: unrecognized option\nfatal: upload failed",
+    "changed_files": [
+      "lib/util.py"
+    ],
+    "label": "CLOSE",
+    "reason": "VCS tool internal error"
+  },
+  {
+    "id": "infra_004",
+    "log": "repo: command not found\nBuild aborted.",
+    "changed_files": [],
+    "label": "CLOSE",
+    "reason": "VCS tool missing from CI node"
+  },
+  {
+    "id": "infra_005",
+    "log": "ssh: connect to host build-server timeout\nfatal: Could not read from remote repository.",
+    "changed_files": [
+      "src/net/client.cpp"
+    ],
+    "label": "CLOSE",
+    "reason": "Git remote unreachable, network issue"
+  },
+  {
+    "id": "infra_006",
+    "log": "fatal: Could not read from remote repository.\nPlease make sure you have the correct access rights.",
+    "changed_files": [
+      "README.md"
+    ],
+    "label": "CLOSE",
+    "reason": "Git server not accessible"
+  },
+  {
+    "id": "infra_007",
+    "log": "ERROR: slave went offline during build\nConnection lost to build node.",
+    "changed_files": [
+      "src/core.cpp"
+    ],
+    "label": "CLOSE",
+    "reason": "Build node disconnected"
+  },
+  {
+    "id": "infra_008",
+    "log": "Build node offline. ChannelClosedException: connection was broken\nRetrying...",
+    "changed_files": [
+      "lib/parser.java"
+    ],
+    "label": "CLOSE",
+    "reason": "Build node offline"
+  },
+  {
+    "id": "infra_009",
+    "log": "Uploading artifacts...\nERROR: upload failed: connection reset by peer\nArtifact storage unavailable.",
+    "changed_files": [
+      "src/api.kt"
+    ],
+    "label": "CLOSE",
+    "reason": "Artifact upload infrastructure failure"
+  },
+  {
+    "id": "infra_010",
+    "log": "Deploying build output...\nput object failed: service unavailable (503)",
+    "changed_files": [
+      "build.gradle"
+    ],
+    "label": "CLOSE",
+    "reason": "Storage service failure"
+  },
+  {
+    "id": "infra_011",
+    "log": "scp: connection lost during file transfer\nCould not copy test results.",
+    "changed_files": [
+      "tests/test_main.py"
+    ],
+    "label": "CLOSE",
+    "reason": "SCP file transfer failure"
+  },
+  {
+    "id": "infra_012",
+    "log": "ssh: connect to host ci-node-03 port 22: Connection timed out\nFailed to distribute build.",
+    "changed_files": [
+      "src/worker.java"
+    ],
+    "label": "CLOSE",
+    "reason": "SSH infrastructure failure"
+  },
+  {
+    "id": "infra_013",
+    "log": "Preparing workspace...\ngit reset --hard failed: unable to reset index\nWorkspace corrupted.",
+    "changed_files": [
+      "src/init.cpp"
+    ],
+    "label": "CLOSE",
+    "reason": "Git reset failure before code applied"
+  },
+  {
+    "id": "infra_014",
+    "log": "During git-reset: fatal error: unable to reset\nCannot prepare workspace for build.",
+    "changed_files": [
+      "Makefile"
+    ],
+    "label": "CLOSE",
+    "reason": "Git workspace preparation failure"
+  },
+  {
+    "id": "infra_015",
+    "log": "Building target //core:engine\nKilled\nProcess terminated unexpectedly.",
+    "changed_files": [
+      "src/engine.cpp"
+    ],
+    "label": "ESCALATE",
+    "reason": "Killed signal alone is ambiguous — could be OOM kill or timeout SIGKILL. Cannot prove infra without oom-kill context."
+  },
+  {
+    "id": "infra_016",
+    "log": "cc1plus: Out of memory allocating 4096 bytes\ncompilation terminated.",
+    "changed_files": [
+      "src/large_module.cpp"
+    ],
+    "label": "ESCALATE",
+    "reason": "Compiler Out of memory can be caused by code (template expansion). Cannot prove infra without OS-level oom-kill signal."
+  },
+  {
+    "id": "infra_017",
+    "log": "ERROR: /home/.cache/bazel/output_user_root/abc123/sandbox: No such file or directory\nBuild cache missing.",
+    "changed_files": [
+      "src/lib.rs"
+    ],
+    "label": "CLOSE",
+    "reason": "Bazel cache path missing on CI node"
+  },
+  {
+    "id": "infra_018",
+    "log": "node is offline\nBuild cannot continue without executor.",
+    "changed_files": [
+      "src/service.java"
+    ],
+    "label": "CLOSE",
+    "reason": "Build node offline"
+  },
+  {
+    "id": "infra_019",
+    "log": "Building src/main.cpp...\n[ERROR] No space left on device\nerror: failed to write output file 'src/main.o'",
+    "changed_files": [
+      "src/main.cpp"
+    ],
+    "label": "CLOSE",
+    "reason": "Adversarial: disk full is root cause despite file match and error keyword"
+  },
+  {
+    "id": "infra_020",
+    "log": "ssh: connect to host git-server.example.com port 22: Connection refused\ngit fetch failed.",
+    "changed_files": [
+      "src/feature.kt"
+    ],
+    "label": "CLOSE",
+    "reason": "Git connection refused, network layer"
+  },
+  {
+    "id": "infra_021",
+    "log": "oom-kill: process 12345 (cc1plus) was killed\nBuild terminated.",
+    "changed_files": [
+      "include/header.h"
+    ],
+    "label": "CLOSE",
+    "reason": "OOM kill signal from OS"
+  },
+  {
+    "id": "infra_022",
+    "log": "ERROR: upload failed: timeout after 300s\nArtifact publishing failed.",
+    "changed_files": [
+      "src/publish.py"
+    ],
+    "label": "CLOSE",
+    "reason": "Artifact upload timeout"
+  },
+  {
+    "id": "compile_001",
+    "log": "src/auth/handler.java:15:10: error: cannot find symbol\n    symbol: class TokenValidator\n    location: package auth",
+    "changed_files": [
+      "src/auth/handler.java"
+    ],
+    "label": "TRUE_REJECT",
+    "reason": "Compile error in changed file"
+  },
+  {
+    "id": "compile_002",
+    "log": "src/net/client.cpp:88:5: error: use of undeclared identifier 'sendPacket'\n1 error generated.",
+    "changed_files": [
+      "src/net/client.cpp"
+    ],
+    "label": "TRUE_REJECT",
+    "reason": "Undeclared identifier in changed file"
+  },
+  {
+    "id": "compile_003",
+    "log": "src/model/user.kt:22:3: error: Unresolved reference: validateEmail\nCompilation failed.",
+    "changed_files": [
+      "src/model/user.kt"
+    ],
+    "label": "TRUE_REJECT",
+    "reason": "Kotlin unresolved reference in changed file"
+  },
+  {
+    "id": "compile_004",
+    "log": "src/parser/lexer.cpp:105:20: error: no matching function for call to 'Token::Token(int, std::string)'\nnote: candidate expects 3 arguments, 2 provided",
+    "changed_files": [
+      "src/parser/lexer.cpp"
+    ],
+    "label": "TRUE_REJECT",
+    "reason": "Constructor mismatch in changed file"
+  },
+  {
+    "id": "compile_005",
+    "log": "src/core/engine.java:45:12: error: incompatible types: String cannot be converted to int\n1 error",
+    "changed_files": [
+      "src/core/engine.java"
+    ],
+    "label": "TRUE_REJECT",
+    "reason": "Type error in changed file"
+  },
+  {
+    "id": "compile_006",
+    "log": "src/util/helper.cpp:30:1: error: expected ';' before '}' token\nBuild failed with 1 error.",
+    "changed_files": [
+      "src/util/helper.cpp"
+    ],
+    "label": "TRUE_REJECT",
+    "reason": "Syntax error in changed file"
+  },
+  {
+    "id": "compile_007",
+    "log": "ld: symbol(s) not found for architecture x86_64\ncollect2: error: ld returned 1 exit status",
+    "changed_files": [
+      "src/binding/native.cpp"
+    ],
+    "label": "ESCALATE",
+    "reason": "Linker error but no file path extractable"
+  },
+  {
+    "id": "compile_008",
+    "log": "src/api/service.java:12:1: error: package com.example.utils does not exist\nimport com.example.utils.Helper;",
+    "changed_files": [
+      "src/api/service.java"
+    ],
+    "label": "TRUE_REJECT",
+    "reason": "Missing package in changed file"
+  },
+  {
+    "id": "escalate_001",
+    "log": "Test timed out after 300 seconds\njunit.framework.AssertionFailedError: test did not complete",
+    "changed_files": [
+      "src/slow_test.java"
+    ],
+    "label": "ESCALATE",
+    "reason": "Test timeout — code can introduce infinite loops"
+  },
+  {
+    "id": "escalate_002",
+    "log": "FAILED: 3 of 100 tests failed (flaky)\ntest_network_retry: connection reset during test",
+    "changed_files": [
+      "src/network.cpp"
+    ],
+    "label": "ESCALATE",
+    "reason": "Flaky test — code can trigger race conditions"
+  },
+  {
+    "id": "escalate_003",
+    "log": "src/model/data.java:20:5: error: cannot find symbol\n    symbol: method process()\n    location: class DataProcessor",
+    "changed_files": [
+      "src/other/unrelated.java"
+    ],
+    "label": "ESCALATE",
+    "reason": "Compile error but no file intersection"
+  },
+  {
+    "id": "escalate_004",
+    "log": "Build failed with unknown error\nProcess exited with code 1",
+    "changed_files": [
+      "src/main.cpp"
+    ],
+    "label": "ESCALATE",
+    "reason": "Generic failure, no deterministic signal"
+  },
+  {
+    "id": "escalate_005",
+    "log": "src/core/processor.cpp:55:8: error: redefinition of 'class Worker'\nprevious definition here",
+    "changed_files": [
+      "src/core/processor.cpp",
+      "src/util/helpers.cpp"
+    ],
+    "label": "ESCALATE",
+    "reason": "Multi-change batch (2 CRs) cannot isolate cause",
+    "change_count": 2
+  },
+  {
+    "id": "escalate_006",
+    "log": "ModuleNotFoundError: No module named 'deprecated_lib'\nImport failed during build.",
+    "changed_files": [],
+    "label": "ESCALATE",
+    "reason": "No changed_files provided"
+  },
+  {
+    "id": "escalate_007",
+    "log": "error: merge conflict in src/config.yaml\nAutomatic merge failed; fix conflicts and commit.",
+    "changed_files": [
+      "src/config.yaml"
+    ],
+    "label": "ESCALATE",
+    "reason": "Merge conflict — code can conflict with another change"
+  },
+  {
+    "id": "escalate_008",
+    "log": "Running integration tests...\ncom.example.ServiceTest.testRetry FAILED\njava.lang.AssertionError: Expected 3 retries but got 0\n\tat com.example.ServiceTest.testRetry(ServiceTest.java:55)\nBUILD FAILED\n1 test failed",
+    "changed_files": [
+      "src/com/example/RetryPolicy.java"
+    ],
+    "label": "ESCALATE",
+    "reason": "Test failure (not compilation error). Could be code bug or flaky test. Q2 only handles compilation errors."
+  },
+  {
+    "id": "escalate_009",
+    "log": "Running integration tests...\ncom.example.HttpClientTest.testTimeout FAILED\njava.net.SocketTimeoutException: connection timed out after 30s\n\tat com.example.HttpClient.connect(HttpClient.java:88)\nBUILD FAILED",
+    "changed_files": [
+      "src/com/example/HttpClient.java"
+    ],
+    "label": "ESCALATE",
+    "reason": "Connection timed out in test context (no SSH/SCP/git). Could be code setting too-short timeout. Rule 8 must NOT fire without SSH context."
+  },
+  {
+    "id": "infra_023",
+    "log": "Attempting to cherry-pick commit abc123...\nCONFLICT: src/main.cpp\ngit reset --hard failed: unable to reset index\nWorkspace cleanup failed.",
+    "changed_files": [
+      "src/main.cpp"
+    ],
+    "label": "ESCALATE",
+    "reason": "Git reset failure in cherry-pick context — may be caused by code change conflicts. Rule 9 guard must skip."
+  }
+]
