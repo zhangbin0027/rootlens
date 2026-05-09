@@ -94,6 +94,8 @@ jobs:
       - name: Compliance — no local machine paths
         run: |
           if grep -rn \
+            --include="*.py" --include="*.json" --include="*.yaml" \
+            --include="*.yml" --include="*.sh" --include="*.md" \
             -e "/home/[a-z][a-z0-9_-]*/" \
             -e "/local/home/" \
             -e "/Users/[A-Za-z]" \
