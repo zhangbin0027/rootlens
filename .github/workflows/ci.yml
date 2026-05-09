@@ -1,0 +1,104 @@
+name: RootLens CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    name: Spec · Quality · Compliance
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install package
+        run: pip install -e .
+
+      # ── Step 1: Demo scenarios ───────────────────────────────────
+      - name: Demo scenarios
+        run: |
+          output=$(python3 examples/demo.py)
+          echo "$output"
+
+          check() {
+            local label="$1" expected="$2"
+            if echo "$output" | grep -q "decision:.*${expected}"; then
+              echo "✅ ${label}: ${expected}"
+            else
+              echo "❌ ${label}: expected ${expected}"
+              exit 1
+            fi
+          }
+
+          check "Scenario 1 (disk full)"       "CLOSE"
+          check "Scenario 2 (compile error)"   "TRUE_REJECT"
+          check "Scenario 4 (ambiguous)"       "ESCALATE"
+
+      # ── Step 2: Benchmark ────────────────────────────────────────
+      - name: Benchmark — 100% accuracy + 0% false blame
+        run: |
+          output=$(python3 benchmarks/evaluate.py)
+          echo "$output"
+
+          if echo "$output" | grep -q "ZERO mismatches"; then
+            echo "✅ Accuracy: 100%"
+          else
+            echo "❌ Accuracy check failed"
+            exit 1
+          fi
+
+          if echo "$output" | grep -q "FALSE BLAME RATE = 0%"; then
+            echo "✅ False blame: 0%"
+          else
+            echo "❌ False blame check failed"
+            exit 1
+          fi
+
+      # ── Step 3: Compliance scan ──────────────────────────────────
+      - name: Compliance — no internal references
+        run: |
+          # Internal system names must not appear in source/config/data
+          if grep -rni \
+            "labcollab\|kbits\|midway\|corp\.\|a2z\.com" \
+            src/ configs/ examples/ benchmarks/ scripts/ 2>/dev/null; then
+            echo "❌ Internal system reference detected"
+            exit 1
+          fi
+          echo "✅ No internal system references"
+
+      - name: Compliance — no credentials
+        run: |
+          if grep -rn \
+            -e "ghp_[A-Za-z0-9]" \
+            -e "github_pat_[A-Za-z0-9]" \
+            -e "AKIA[A-Z0-9]" \
+            -e "password\s*=\s*['\"][^'\"]\+['\"]" \
+            -e "secret\s*=\s*['\"][^'\"]\+['\"]" \
+            src/ configs/ scripts/ 2>/dev/null; then
+            echo "❌ Credential pattern detected"
+            exit 1
+          fi
+          echo "✅ No credentials found"
+
+      - name: Compliance — no local machine paths
+        run: |
+          if grep -rn \
+            -e "/home/[a-z][a-z0-9_-]*/" \
+            -e "/local/home/" \
+            -e "/Users/[A-Za-z]" \
+            src/ configs/ benchmarks/ scripts/ 2>/dev/null; then
+            echo "❌ Local machine path detected"
+            exit 1
+          fi
+          echo "✅ No local paths found"
