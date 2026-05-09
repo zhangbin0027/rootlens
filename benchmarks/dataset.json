@@ -130,7 +130,7 @@
       "src/engine.cpp"
     ],
     "label": "ESCALATE",
-    "reason": "Killed signal alone is ambiguous — could be OOM kill or timeout SIGKILL. Cannot prove infra without oom-kill context."
+    "reason": "Killed signal alone is ambiguous \u2014 could be OOM kill or timeout SIGKILL. Cannot prove infra without oom-kill context."
   },
   {
     "id": "infra_016",
@@ -274,7 +274,7 @@
       "src/slow_test.java"
     ],
     "label": "ESCALATE",
-    "reason": "Test timeout — code can introduce infinite loops"
+    "reason": "Test timeout \u2014 code can introduce infinite loops"
   },
   {
     "id": "escalate_002",
@@ -283,7 +283,7 @@
       "src/network.cpp"
     ],
     "label": "ESCALATE",
-    "reason": "Flaky test — code can trigger race conditions"
+    "reason": "Flaky test \u2014 code can trigger race conditions"
   },
   {
     "id": "escalate_003",
@@ -328,7 +328,7 @@
       "src/config.yaml"
     ],
     "label": "ESCALATE",
-    "reason": "Merge conflict — code can conflict with another change"
+    "reason": "Merge conflict \u2014 code can conflict with another change"
   },
   {
     "id": "escalate_008",
@@ -355,6 +355,15 @@
       "src/main.cpp"
     ],
     "label": "ESCALATE",
-    "reason": "Git reset failure in cherry-pick context — may be caused by code change conflicts. Rule 9 guard must skip."
+    "reason": "Git reset failure in cherry-pick context \u2014 may be caused by code change conflicts. Rule 9 guard must skip."
+  },
+  {
+    "id": "adversarial_vendor_001",
+    "log": "vendor/lib/util.java:5: error: cannot find symbol\n  symbol: class Helper",
+    "changed_files": [
+      "src/lib/util.java"
+    ],
+    "label": "ESCALATE",
+    "reason": "Error in vendor/lib/util.java but change is in src/lib/util.java \u2014 different files despite same basename. Exact path match fails, system correctly ESCALATE."
   }
 ]

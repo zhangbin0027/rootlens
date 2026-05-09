@@ -110,25 +110,14 @@ class DecisionEngine:
         )
 
     def _intersect(self, changed: Set[str], error: Set[str]) -> Set[str]:
-        """File intersection with suffix matching fallback.
+        """File intersection using EXACT path match only.
 
-        Primary: exact normalized path match.
-        Fallback: if no exact match, try suffix matching (basename comparison)
-        to handle cases where compiler reports paths differently from git.
+        Strict matching prevents false blame in monorepos where
+        different directories contain files with the same name
+        (e.g., src/auth/handler.java vs vendor/auth/handler.java).
+
+        Trade-off: if CI logs report absolute paths but changed_files
+        are relative, this will not match (safe ESCALATE).
+        Callers should normalize paths before input for best coverage.
         """
-        # Both sets are already normalized via BuildContext.__post_init__
-        exact = changed & error
-        if exact:
-            return exact
-        # Fallback: match on filename suffix (last path component)
-        for cf in changed:
-            cf_base = cf.rsplit("/", 1)[-1] if "/" in cf else cf
-            for ef in error:
-                ef_base = ef.rsplit("/", 1)[-1] if "/" in ef else ef
-                if cf_base == ef_base and cf_base:
-                    # Only accept suffix match if it's unambiguous
-                    # (only one changed file has this basename)
-                    same_base = [c for c in changed if (c.rsplit("/", 1)[-1] if "/" in c else c) == cf_base]
-                    if len(same_base) == 1:
-                        return {cf}
-        return set()
+        return changed & error

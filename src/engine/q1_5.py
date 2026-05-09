@@ -219,13 +219,15 @@ class InfraGuard:
     @staticmethod
     def _check_build_node_offline(log: str) -> Optional[RuleVerdict]:
         """Build node disconnected — infrastructure state."""
+        # Patterns match verbatim CI system log output (read-only, cannot be changed).
+        # "slave went offline" is legacy Jenkins/CI terminology present in real build logs.
         patterns = [
             "slave went offline",
             "node is offline",
             "ChannelClosedException",
             "connection was broken",
         ]
-        _node_ctx = {"slave", "node", "agent", "executor", "jenkins", "worker"}
+        _node_ctx = {"slave", "node", "agent", "executor", "worker", "builder", "runner"}
         low = log.lower()
         for pat in patterns:
             if pat.lower() not in low or not _in_error_context(log, pat):
@@ -233,12 +235,12 @@ class InfraGuard:
             if pat == "connection was broken":
                 # Guard: require CI node context in the same or adjacent lines
                 matched_lines = [
-                    l for l in log.split("\n") if pat.lower() in l.lower()
+                    line for line in log.split("\n") if pat.lower() in line.lower()
                 ]
                 if not any(
-                    any(ctx in l.lower() for ctx in _node_ctx)
+                    any(ctx in ln.lower() for ctx in _node_ctx)
                     for match_line in matched_lines
-                    for l in _get_adjacent_lines(log, match_line, window=2)
+                    for ln in _get_adjacent_lines(log, match_line, window=2)
                 ):
                     continue
             return RuleVerdict(

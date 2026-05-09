@@ -44,7 +44,13 @@ def analyze(
     """Analyze a build failure and return causal decision.
 
     This is the primary public API.
+
+    Raises:
+        ValueError: If build_log is not a non-empty string.
     """
+    if not isinstance(build_log, str) or not build_log.strip():
+        raise ValueError("build_log must be a non-empty string")
+
     ctx = BuildContext(
         build_log=build_log,
         changed_files=changed_files or [],

@@ -31,7 +31,7 @@ Validated on an internal production CI system (dataset not publicly available):
 | Auto-resolution coverage   | 60–70% of cases                  |
 | Remainder                  | Safely escalated to human review |
 
-Reproducible benchmark (included): 40 cases, 100% accuracy, 0% false blame. See `benchmarks/`.
+Reproducible benchmark (included): 41 cases, 100% accuracy, 0% false blame. See `benchmarks/`.
 
 ## Architecture
 
@@ -128,11 +128,11 @@ python examples/demo.py
 python benchmarks/evaluate.py
 ```
 
-Results (40 cases, adversarial included):
+Results (41 cases, adversarial included):
 
 | Metric           | RootLens | Naive Baseline |
 | ---------------- | -------- | -------------- |
-| Accuracy         | **100%** | ~60%           |
+| Accuracy         | **100%** | ~66%           |
 | False Blame Rate | **0%**   | ~15%           |
 
 ## Project Structure
@@ -160,7 +160,7 @@ rootlens/
 │   │   └── repo_sync_failure.log
 │   └── demo.py
 └── benchmarks/
-    ├── dataset.json       # 40 cases with adversarial samples
+    ├── dataset.json       # 41 cases with adversarial samples
     └── evaluate.py        # baseline comparison
 ```
 
