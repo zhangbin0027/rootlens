@@ -25,43 +25,10 @@ echo ""
 # ── Stage 1: Spec Compliance Review (subagent) ──────────────────
 echo "[Stage 1] Spec Compliance Review..."
 
-claude --print --dangerously-skip-permissions \
+claude --print --agent spec-reviewer \
   --output-format text \
-  -p "
-你是 RootLens 的 Spec Compliance Reviewer。只做以下检查，不做其他任何事。
-
-## 检查清单
-
-1. 运行 python3 examples/demo.py，确认：
-   - Scenario 1 (disk full) → CLOSE
-   - Scenario 2 (compile error + file match) → TRUE_REJECT
-   - Scenario 3 (pre-apply) → CLOSE
-   - Scenario 4 (ambiguous) → ESCALATE
-
-2. 运行 python3 benchmarks/evaluate.py，确认：
-   - 100% accuracy
-   - 0% false blame rate
-
-3. 运行: grep -ri 'amazon\|gerrit\|jira\|jenkins\|labcollab' src/ configs/ examples/
-   确认零内部引用泄漏。
-
-4. 检查 src/engine/q1_5.py 的 Rule 10 (_check_build_oom_killed)：
-   确认只匹配 'oom-kill' / 'oom_kill'（严格 OOM kernel signal），
-   不匹配孤立的 'Killed' 或 'Out of memory'。
-
-5. 检查 src/engine/decision.py 的 _intersect 方法：
-   确认只有 'return changed & error'，无 basename/2-segment fallback。
-
-## 输出格式（严格遵守）
-
-每条检查结果用一行：
-  ✅ CHECK_NAME — 通过原因
-  ❌ CHECK_NAME — 失败原因
-
-最后一行必须是以下之一（无额外文字）：
-  SPEC_APPROVED
-  SPEC_REJECTED: <问题摘要>
-" | tee "$STATUS_FILE"
+  -p "Run all spec compliance checks for RootLens. Working directory: $PROJECT_DIR" \
+  | tee "$STATUS_FILE"
 
 echo ""
 
@@ -80,38 +47,10 @@ echo ""
 # ── Stage 2: Code Quality Review (subagent) ─────────────────────
 echo "[Stage 2] Code Quality Review..."
 
-GIT_DIFF=$(git diff --stat HEAD 2>/dev/null || echo "(no staged changes)")
-
-claude --print --dangerously-skip-permissions \
+claude --print --agent quality-reviewer \
   --output-format text \
-  -p "
-你是 RootLens 的 Code Quality Reviewer。只检查代码质量，不运行测试（Stage 1 已完成）。
-
-## 改动范围
-$(git diff HEAD --name-only 2>/dev/null | head -20 || echo "(working tree changes)")
-
-## 检查维度
-
-对 src/engine/ 下的每个改动文件检查：
-
-1. 有无 TODO / FIXME / 未完成占位符
-2. 有无静默吞掉异常（bare except、pass after except）
-3. import 是否都在文件顶部（无函数内 import，Rule 10 里有一个 import re 例外可接受）
-4. 新增的 docstring / 注释 是否准确描述了代码行为
-5. 函数名和变量名是否清晰
-
-## 输出格式
-
-每个文件一行结论：
-  ✅ src/engine/xxx.py — OK
-  ⚠️ src/engine/xxx.py — [可选改进，不阻塞]
-  ❌ src/engine/xxx.py — [必须修复的问题]
-
-最后一行：
-  QUALITY_APPROVED
-  QUALITY_APPROVED_WITH_NOTES: <notes>
-  QUALITY_REJECTED: <问题摘要>
-" | tee -a "$STATUS_FILE"
+  -p "Run code quality review for all files in src/engine/. Working directory: $PROJECT_DIR" \
+  | tee -a "$STATUS_FILE"
 
 echo ""
 

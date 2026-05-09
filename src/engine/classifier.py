@@ -67,7 +67,8 @@ def _load_patterns() -> tuple:
             regex_str = pat.get("regex", "") or pat.get("pattern", "")
             try:
                 pat["_compiled"] = re.compile(regex_str, re.MULTILINE | re.IGNORECASE)
-            except re.error:
+            except re.error as e:
+                logger.warning("Skipping uncompilable pattern %r: %s", regex_str, e)
                 pat["_compiled"] = None
         return tuple(patterns)
     except Exception as e:

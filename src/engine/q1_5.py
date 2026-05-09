@@ -220,7 +220,7 @@ class InfraGuard:
     def _check_build_node_offline(log: str) -> Optional[RuleVerdict]:
         """Build node disconnected — infrastructure state."""
         # Patterns match verbatim CI system log output (read-only, cannot be changed).
-        # "slave went offline" is legacy Jenkins/CI terminology present in real build logs.
+        # "slave went offline" is legacy CI system terminology present in real build logs.
         patterns = [
             "slave went offline",
             "node is offline",
