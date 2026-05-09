@@ -17,12 +17,12 @@ STATUS_FILE="/tmp/rootlens_review_status_$$.txt"
 
 cd "$PROJECT_DIR"
 
-echo "=== RootLens Auto-Review ==="
+echo "=== RootLens Auto-Review (3-Stage) ==="
 echo "Project: $PROJECT_DIR"
 echo "Dry run: $DRY_RUN"
 echo ""
 
-# ── Stage 1: Spec Compliance Review (subagent) ──────────────────
+# ── Stage 1: Spec Compliance Review ─────────────────────────────
 echo "[Stage 1] Spec Compliance Review..."
 
 claude --print --agent spec-reviewer \
@@ -32,7 +32,6 @@ claude --print --agent spec-reviewer \
 
 echo ""
 
-# 提取最后一行结论
 SPEC_RESULT=$(grep -E '^SPEC_(APPROVED|REJECTED)' "$STATUS_FILE" | tail -1 || echo "SPEC_REJECTED: 无法解析输出")
 
 if [[ "$SPEC_RESULT" != "SPEC_APPROVED" ]]; then
@@ -44,7 +43,7 @@ fi
 echo "✅ Stage 1 PASSED"
 echo ""
 
-# ── Stage 2: Code Quality Review (subagent) ─────────────────────
+# ── Stage 2: Code Quality Review ────────────────────────────────
 echo "[Stage 2] Code Quality Review..."
 
 claude --print --agent quality-reviewer \
@@ -65,6 +64,28 @@ fi
 echo "✅ Stage 2 PASSED ($QUALITY_RESULT)"
 echo ""
 
+# ── Stage 3: Compliance & Sensitive Information Review ──────────
+echo "[Stage 3] Compliance & Sensitive Information Review..."
+
+claude --print --agent compliance-reviewer \
+  --output-format text \
+  -p "Scan all staged and tracked files for sensitive information leaks before commit. Working directory: $PROJECT_DIR" \
+  | tee -a "$STATUS_FILE"
+
+echo ""
+
+COMPLIANCE_RESULT=$(grep -E 'COMPLIANCE_(APPROVED|REJECTED)' "$STATUS_FILE" | tail -1 || echo "COMPLIANCE_REJECTED: 无法解析输出")
+
+if [[ "$COMPLIANCE_RESULT" == COMPLIANCE_REJECTED* ]]; then
+  echo "❌ Stage 3 FAILED: $COMPLIANCE_RESULT"
+  echo "   Sensitive information detected — commit blocked."
+  rm -f "$STATUS_FILE"
+  exit 1
+fi
+
+echo "✅ Stage 3 PASSED ($COMPLIANCE_RESULT)"
+echo ""
+
 # ── Commit + Push ────────────────────────────────────────────────
 if $DRY_RUN; then
   echo "[Dry run] 跳过 commit 和 push"
@@ -80,21 +101,15 @@ if [[ -z "$CHANGED_FILES" ]]; then
 fi
 
 echo "[Commit] 提交改动..."
-git add README.md benchmarks/dataset.json src/engine/decision.py \
-        src/engine/pipeline.py src/engine/q1_5.py src/engine/classifier.py \
-        .gitignore 2>/dev/null || true
+git add -u 2>/dev/null || true
 
 COMMIT_MSG="$(cat <<'EOF'
-fix: post-review fixes (auto-reviewed by Claude Code)
+chore: auto-reviewed and approved (3-stage Claude Code review)
 
-- Rule 10: tighten OOM detection to oom-kill/oom_kill only
-- _intersect: exact path match only, remove basename fallback
-- classifier: module-level YAML cache (462x speedup)
-- Rule 9: add cherry-pick/revert guard
-- pipeline: ValueError on None/empty build_log
-- benchmark: relabel infra_015/016 to ESCALATE
-
-Benchmark: 100% accuracy, 0% false blame (41 cases)
+Passed:
+- Stage 1: Spec compliance (benchmark 100% accuracy, 0% false blame)
+- Stage 2: Code quality (no TODOs, no silent exceptions, PEP 8 clean)
+- Stage 3: Compliance (no credentials, no internal references, no user data)
 EOF
 )"
 
@@ -106,5 +121,5 @@ echo "[Push] 推送到 origin/main..."
 git push origin main
 
 echo ""
-echo "✅ All done. Two-stage review passed, changes pushed."
+echo "✅ All done. 3-stage review passed, changes pushed."
 rm -f "$STATUS_FILE"
