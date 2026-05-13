@@ -97,6 +97,70 @@ class TestRuleGitResetFailure:
             assert r.rule_name != "GIT_RESET_FAILURE"
 
 
+class TestRuleGitRemoteUnreachable:
+    def test_connection_refused_with_git_context(self):
+        log = "error: Connection refused\ngit fetch origin failed"
+        r = InfraGuard.evaluate(log)
+        assert r is not None
+        assert r.rule_name == "GIT_REMOTE_UNREACHABLE"
+
+    def test_could_not_read_remote(self):
+        log = "error: Could not read from remote repository\ngit clone failed"
+        r = InfraGuard.evaluate(log)
+        assert r is not None
+        assert r.rule_name == "GIT_REMOTE_UNREACHABLE"
+
+    def test_connection_refused_without_git_context_no_fire(self):
+        log = "Connection refused\nHTTP server error"
+        r = InfraGuard.evaluate(log)
+        if r is not None:
+            assert r.rule_name != "GIT_REMOTE_UNREACHABLE"
+
+
+class TestRuleArtifactUploadFailure:
+    def test_upload_failed(self):
+        log = "error uploading artifact\nupload failed: connection reset"
+        r = InfraGuard.evaluate(log)
+        assert r is not None
+        assert r.rule_name == "ARTIFACT_UPLOAD_FAILURE"
+
+    def test_put_object_failed(self):
+        log = "put object failed: S3 timeout\nerror storing artifact"
+        r = InfraGuard.evaluate(log)
+        assert r is not None
+        assert r.rule_name == "ARTIFACT_UPLOAD_FAILURE"
+
+
+class TestRuleFileTransferFailure:
+    def test_ssh_connect_to_host(self):
+        log = "error\nscp transfer: ssh: connect to host artifacts.ci port 22: No route to host"
+        r = InfraGuard.evaluate(log)
+        assert r is not None
+        assert r.rule_name in ("FILE_TRANSFER_FAILURE", "GIT_REMOTE_UNREACHABLE")
+
+    def test_scp_connection_lost(self):
+        log = "error\nscp: connection lost during transfer"
+        r = InfraGuard.evaluate(log)
+        assert r is not None
+        assert r.rule_name == "FILE_TRANSFER_FAILURE"
+
+    def test_connection_timed_out_with_ssh(self):
+        log = "error\nssh transfer: connection timed out"
+        r = InfraGuard.evaluate(log)
+        assert r is not None
+        assert r.rule_name == "FILE_TRANSFER_FAILURE"
+
+
+class TestInErrorContextQuoteGuard:
+    def test_signal_in_quoted_string_ignored(self):
+        # Signal inside a string literal should not count as genuine context
+        log = 'assert error_msg == "upload failed"\ntest passed'
+        r = InfraGuard.evaluate(log)
+        # upload failed in quoted assertion context — should not fire
+        if r is not None:
+            assert r.rule_name != "ARTIFACT_UPLOAD_FAILURE"
+
+
 class TestNoFalsePositives:
     """Adversarial: logs that look like infra but are code-caused."""
 

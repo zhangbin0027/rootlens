@@ -41,21 +41,40 @@ class TestQ15Integration:
         assert r.decision == "ESCALATE"
 
 
+COMPILE_LOG = "error: cannot find symbol\nsrc/auth/Login.java:42: error"
+
+
 class TestQ2FileIntersection:
     def test_no_changed_files_escalates(self, engine):
-        # Need a log that matches compilation pattern
-        log = "src/foo.cpp:10: error: undeclared identifier 'x'"
-        ctx = BuildContext(build_log=log, changed_files=[])
+        ctx = BuildContext(build_log=COMPILE_LOG, changed_files=[])
         r = engine.evaluate(ctx)
-        # Either ESCALATE (no files) or ESCALATE (no pattern match)
         assert r.decision == "ESCALATE"
+        assert "changed_files" in r.reason
 
     def test_multi_change_batch_escalates(self, engine):
-        log = "src/foo.cpp:10: error: undeclared identifier"
         ctx = BuildContext(
-            build_log=log,
-            changed_files=["src/foo.cpp"],
+            build_log=COMPILE_LOG,
+            changed_files=["src/auth/Login.java"],
             change_count=3,
+        )
+        r = engine.evaluate(ctx)
+        assert r.decision == "ESCALATE"
+        assert "Multi-change" in r.reason
+
+    def test_no_file_intersection_escalates(self, engine):
+        ctx = BuildContext(
+            build_log=COMPILE_LOG,
+            changed_files=["src/other/Unrelated.java"],
+        )
+        r = engine.evaluate(ctx)
+        assert r.decision == "ESCALATE"
+        assert "intersection" in r.reason
+
+    def test_non_deterministic_error_type_escalates(self, engine):
+        # Log matches a pattern but error_type is not in _DETERMINISTIC_TYPES
+        ctx = BuildContext(
+            build_log="warning: something suspicious",
+            changed_files=["src/foo.java"],
         )
         r = engine.evaluate(ctx)
         assert r.decision == "ESCALATE"

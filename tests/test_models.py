@@ -37,6 +37,11 @@ class TestRuleVerdict:
         )
         assert v.rule_name == "TEST"
 
+    def test_empty_rule_name_raises(self):
+        with pytest.raises(ValueError, match="rule_name must be non-empty"):
+            RuleVerdict(rule_name="", causal_proof="p",
+                        counterexample="c", matched_signal="s")
+
     def test_empty_proof_raises(self):
         with pytest.raises(ValueError, match="causal_proof required"):
             RuleVerdict(rule_name="X", causal_proof="",

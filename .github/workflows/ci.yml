@@ -26,12 +26,12 @@ jobs:
         run: pip install -e .
 
       # ── Step 1: Unit tests + coverage gate ──────────────────────
-      - name: Unit tests (coverage ≥ 75%)
+      - name: Unit tests (coverage ≥ 90%)
         run: |
           python3 -m pytest tests/ \
             --cov=rootlens \
             --cov-report=term-missing \
-            --cov-fail-under=75 \
+            --cov-fail-under=90 \
             -q
 
       # ── Step 2: Demo scenarios ───────────────────────────────────
