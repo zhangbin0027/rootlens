@@ -1,6 +1,6 @@
 """Tests for Q1.5 — Causal impossibility rules + anti-injection."""
 import pytest
-from engine.q1_5 import InfraGuard, _in_error_context
+from rootlens.q1_5 import InfraGuard, _in_error_context
 
 
 class TestAntiInjection:

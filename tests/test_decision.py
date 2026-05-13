@@ -1,7 +1,7 @@
 """Tests for decision.py — full engine integration, path normalization, Q2."""
 import pytest
-from engine.decision import DecisionEngine
-from engine.models import BuildContext
+from rootlens.decision import DecisionEngine
+from rootlens.models import BuildContext
 
 
 @pytest.fixture

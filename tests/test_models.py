@@ -1,6 +1,6 @@
 """Tests for models.py — validation, enums, path normalization."""
 import pytest
-from engine.models import (
+from rootlens.models import (
     BuildContext, Decision, DecisionResult, RuleVerdict, normalize_path
 )
 
