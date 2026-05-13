@@ -11,3 +11,6 @@ review/
 benchmarks/results.json
 .pytest_cache/
 adv_*.py
+dist/
+build/
+*.egg-info/

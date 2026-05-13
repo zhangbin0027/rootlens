@@ -8,7 +8,7 @@ on:
 
 jobs:
   verify:
-    name: Spec · Quality · Compliance
+    name: Spec · Tests · Compliance
     runs-on: ubuntu-latest
 
     steps:
@@ -20,12 +20,21 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements.txt pytest pytest-cov
 
       - name: Install package
         run: pip install -e .
 
-      # ── Step 1: Demo scenarios ───────────────────────────────────
+      # ── Step 1: Unit tests + coverage gate ──────────────────────
+      - name: Unit tests (coverage ≥ 75%)
+        run: |
+          python3 -m pytest tests/ \
+            --cov=rootlens \
+            --cov-report=term-missing \
+            --cov-fail-under=75 \
+            -q
+
+      # ── Step 2: Demo scenarios ───────────────────────────────────
       - name: Demo scenarios
         run: |
           output=$(python3 examples/demo.py)
@@ -41,11 +50,11 @@ jobs:
             fi
           }
 
-          check "Scenario 1 (disk full)"       "CLOSE"
-          check "Scenario 2 (compile error)"   "TRUE_REJECT"
-          check "Scenario 4 (ambiguous)"       "ESCALATE"
+          check "Scenario 1 (disk full)"      "CLOSE"
+          check "Scenario 2 (compile error)"  "TRUE_REJECT"
+          check "Scenario 4 (ambiguous)"      "ESCALATE"
 
-      # ── Step 2: Benchmark ────────────────────────────────────────
+      # ── Step 3: Benchmark ────────────────────────────────────────
       - name: Benchmark — 100% accuracy + 0% false blame
         run: |
           output=$(python3 benchmarks/evaluate.py)
@@ -65,10 +74,9 @@ jobs:
             exit 1
           fi
 
-      # ── Step 3: Compliance scan ──────────────────────────────────
+      # ── Step 4: Compliance scan ──────────────────────────────────
       - name: Compliance — no internal references
         run: |
-          # Internal system names must not appear in source/config/data
           if grep -rni \
             "labcollab\|kbits\|midway\|corp\.\|a2z\.com" \
             src/ configs/ examples/ benchmarks/ scripts/ 2>/dev/null; then

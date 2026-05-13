@@ -91,7 +91,16 @@ See [docs/q1_5_rules.md](docs/q1_5_rules.md) for all 10 rules.
 ## Quick Start
 
 ```bash
-pip install pyyaml
+pip install rootlens
+python examples/demo.py
+```
+
+Or from source:
+
+```bash
+git clone https://github.com/zhangbin0027/rootlens.git
+cd rootlens
+pip install -e .
 python examples/demo.py
 ```
 
@@ -167,7 +176,7 @@ rootlens/
 ## API Usage
 
 ```python
-from src.engine.pipeline import analyze
+from rootlens import analyze
 
 result = analyze(
     build_log="error: No space left on device",

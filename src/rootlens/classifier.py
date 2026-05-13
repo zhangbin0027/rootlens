@@ -16,7 +16,7 @@ from .models import ErrorSignal, normalize_path
 
 logger = logging.getLogger("rootlens")
 
-_CONFIG_DIR = Path(__file__).resolve().parent.parent.parent / "configs"
+_CONFIG_DIR = Path(__file__).resolve().parent / "configs"
 
 _FILE_RE = re.compile(
     r"(?:^|\s)([\w./\-]+\.\w{1,5})"
