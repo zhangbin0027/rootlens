@@ -9,6 +9,22 @@ RootLens answers: **"Can this failure be caused by the code change?"**
 - If provably **YES** → `TRUE_REJECT` (100% blame with evidence)
 - If unknown → `ESCALATE` (refuse to guess)
 
+## Why This Exists
+
+At 10,000 builds/day, if 30% of failures incorrectly blame the developer:
+
+- **3,000 false alerts/day**
+- Each costs ~30 minutes of engineer investigation time
+- = **1,500 wasted engineer-hours per day**
+- = eroded trust in CI, delayed real bug detection, developer frustration
+
+Most teams solve this with better dashboards or more log analysis.  
+RootLens solves it differently: **causal reasoning that proves impossibility before assigning blame.**
+
+If the system cannot prove a code change caused the failure, it refuses to blame anyone.
+
+---
+
 ## The Problem
 
 30–40% of CI failures are infrastructure issues (disk full, network timeout, node crash) that get **misattributed to code changes**. This causes:
