@@ -7,7 +7,7 @@ __pycache__/
 CLINE_TRIGGER_PROMPT.md
 CROSS_MODEL_REVIEW_PROMPT.md
 KIRO_REVIEW_PROMPT.md
-review/
+/review/
 benchmarks/results.json
 .pytest_cache/
 adv_*.py

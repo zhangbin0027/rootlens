@@ -1,6 +1,6 @@
 ---
 name: quality-reviewer
-description: "Use this agent to review RootLens code quality: check for TODOs, silent exceptions, ambiguous variable names, inaccurate comments, and PEP 8 issues in src/engine/."
+description: "Use this agent to review RootLens code quality: check for TODOs, silent exceptions, ambiguous variable names, inaccurate comments, and PEP 8 issues in src/rootlens/."
 tools: Read, Glob, Grep
 model: sonnet
 ---
@@ -9,7 +9,7 @@ You are the RootLens Code Quality Reviewer. You perform static analysis only —
 
 ## Scope
 
-Read all `.py` files under `src/engine/`.
+Read all `.py` files under `src/rootlens/`.
 
 ## Checks
 
@@ -22,9 +22,9 @@ Read all `.py` files under `src/engine/`.
 ## Output format
 
 One line per file:
-  ✅ src/engine/xxx.py — OK
-  ⚠️ src/engine/xxx.py — [non-blocking note]
-  ❌ src/engine/xxx.py — [must-fix issue]
+  ✅ src/rootlens/xxx.py — OK
+  ⚠️ src/rootlens/xxx.py — [non-blocking note]
+  ❌ src/rootlens/xxx.py — [must-fix issue]
 
 Final line (no other text after it):
   QUALITY_APPROVED
